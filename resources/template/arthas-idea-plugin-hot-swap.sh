@@ -103,15 +103,23 @@ reset_for_env() {
 }
 select_pid() {
   local IFS=$'\n'
-  CANDIDATES=($(${JAVA_HOME}/bin/jps -l | grep -v sun.tools.jps.Jps | awk '{print $0}'))
+  # 使用 ps -ef 替代 jps -l，格式化为 "PID COMMAND" 以保持兼容
+  CANDIDATES=($(ps -ef | grep '[j]ava' | grep -v 'arthas-boot.jar' | awk '{pid=$2; cmd=""; for(i=8;i<=NF;i++) cmd=cmd" "$i; print pid" "cmd}'))
+
+  if [ ${#CANDIDATES[@]} -eq 0 ]; then
+    echo "$(echo $(tput setaf 1)未找到任何 Java 进程$(tput sgr0))"
+    return 1
+  fi
 
   index=0
   suggest=1
-  # auto select tomcat/pandora-boot process
+  # auto select tomcat/pandora-boot/spring-boot/jar process
   for process in "${CANDIDATES[@]}"; do
     index=$(($index + 1))
     if [ $(echo ${process} | grep -c org.apache.catalina.startup.Bootstrap) -eq 1 ] ||
-      [ $(echo ${process} | grep -c com.taobao.pandora.boot.loader.SarLauncher) -eq 1 ]; then
+      [ $(echo ${process} | grep -c com.taobao.pandora.boot.loader.SarLauncher) -eq 1 ] ||
+      [ $(echo ${process} | grep -c 'spring-boot') -eq 1 ] ||
+      [ $(echo ${process} | grep -c '\.jar') -eq 1 ]; then
       suggest=${index}
       break
     fi
@@ -127,7 +135,7 @@ select_pid() {
     fi
   done
   echo " "
-  echo "$(echo $(tput setaf 1) 请手动选择进程或者idea 预先配置jps -l 工程名称自动执行$(tput sgr0))"
+  echo "$(echo $(tput setaf 1) 请选择目标 Java 进程, 直接回车选择带 * 号的进程$(tput sgr0))"
   echo " "
 
   read choice
@@ -204,8 +212,8 @@ decodeBase64CLassFile() {
 # Usage: doStartRedefine
 doStartRedefine() {
   createFile $HOME/opt/arthas/hotSwapResult.out
-  echo $(tput bold)"arthas start command :$JAVA_HOME/bin/java -jar $HOME/opt/arthas/arthas-boot.jar --select ${SELECT_VALUE}  -c \"${arthasIdeaPluginRedefineCommand}\"  | tee $HOME/opt/arthas/hotSwapResult.out"$(tput sgr0)
-  $JAVA_HOME/bin/java -jar $HOME/opt/arthas/arthas-boot.jar --select ${SELECT_VALUE} -c "${arthasIdeaPluginRedefineCommand}" | tee $HOME/opt/arthas/hotSwapResult.out
+  echo $(tput bold)"arthas start command :$JAVA_HOME/bin/java -jar $HOME/opt/arthas/arthas-boot.jar ${SELECT_VALUE}  -c \"${arthasIdeaPluginRedefineCommand}\"  | tee $HOME/opt/arthas/hotSwapResult.out"$(tput sgr0)
+  $JAVA_HOME/bin/java -jar $HOME/opt/arthas/arthas-boot.jar ${SELECT_VALUE} -c "${arthasIdeaPluginRedefineCommand}" | tee $HOME/opt/arthas/hotSwapResult.out
 }
 
 redefineResult() {
@@ -253,6 +261,10 @@ main() {
   if [ -z ${SELECT_VALUE} ]; then
     exit_on_err 1 "select target process by classname or jar file name target pid is empty"
   fi
+
+  # 先清理之前的arthas attach连接，避免重复attach
+  java -jar /root/opt/arthas/arthas-client.jar 127.0.0.1 3658 -c "stop"
+  sleep 1
 
   doStartRedefine
 
