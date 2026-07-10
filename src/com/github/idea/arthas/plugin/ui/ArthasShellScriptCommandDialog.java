@@ -15,8 +15,13 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.components.ActionLink;
+import com.intellij.uiDesigner.core.GridConstraints;
+import com.intellij.uiDesigner.core.GridLayoutManager;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
@@ -88,6 +93,7 @@ public class ArthasShellScriptCommandDialog extends JDialog {
 
     public ArthasShellScriptCommandDialog(AnActionEvent event) {
         this.commandContext = new CommandContext(event);
+        $$$setupUI$$$();
         this.project = commandContext.getProject();
         this.selectClassName = commandContext.getKeyValue(ShellScriptVariableEnum.CLASS_NAME);
         setContentPane(contentPane);
@@ -241,9 +247,9 @@ public class ArthasShellScriptCommandDialog extends JDialog {
                     this.currentSelectDyScriptVariableEnum = item;
                     ShellScriptCommandEnum shellScriptCommandEnum = (ShellScriptCommandEnum) item.getContentObject();
                     // 控制是否展示 sc command,比如watch 这种命令不需要sc
-                    if(StringUtils.isBlank(shellScriptCommandEnum.getScCommand(commandContext))){
+                    if (StringUtils.isBlank(shellScriptCommandEnum.getScCommand(commandContext))) {
                         dyCopyScCommandButton.setEnabled(false);
-                    }else{
+                    } else {
                         dyCopyScCommandButton.setEnabled(true);
                     }
                 }
@@ -254,9 +260,9 @@ public class ArthasShellScriptCommandDialog extends JDialog {
         this.dyTipLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(currentSelectDyScriptVariableEnum !=null){
-                    ShellScriptCommandEnum contentObject = (ShellScriptCommandEnum)currentSelectDyScriptVariableEnum.getContentObject();
-                    if(contentObject !=null && contentObject.getRefLink() !=null){
+                if (currentSelectDyScriptVariableEnum != null) {
+                    ShellScriptCommandEnum contentObject = (ShellScriptCommandEnum) currentSelectDyScriptVariableEnum.getContentObject();
+                    if (contentObject != null && contentObject.getRefLink() != null) {
                         BrowserUtil.browse(contentObject.getRefLink());
                     }
                 }
@@ -272,8 +278,8 @@ public class ArthasShellScriptCommandDialog extends JDialog {
             boxItem.setContentObject(shellScript);
             boxItem.setDisplay(displayCode);
             boxItem.setTipText(shellScript.getEnumMsg());
-            if(StringUtils.isNotBlank(shellScript.getRefLink())){
-                boxItem.setTipText(String.format(ArthasCommandConstants.LABEL_HTML_FORMAT_AND_LINK,shellScript.getRefLink(),shellScript.getEnumMsg()));
+            if (StringUtils.isNotBlank(shellScript.getRefLink())) {
+                boxItem.setTipText(String.format(ArthasCommandConstants.LABEL_HTML_FORMAT_AND_LINK, shellScript.getRefLink(), shellScript.getEnumMsg()));
             }
             shellScriptComboBox.addItem(boxItem);
         }
@@ -300,8 +306,8 @@ public class ArthasShellScriptCommandDialog extends JDialog {
             boxItem.setContentObject(scriptConstantEnum);
             boxItem.setDisplay(scriptConstantEnum.getCode());
             boxItem.setTipText(scriptConstantEnum.getEnumMsg());
-            if(StringUtils.isNotBlank(scriptConstantEnum.getUrl())){
-                boxItem.setTipText(String.format(ArthasCommandConstants.LABEL_HTML_FORMAT_AND_LINK,scriptConstantEnum.getUrl(),scriptConstantEnum.getEnumMsg()));
+            if (StringUtils.isNotBlank(scriptConstantEnum.getUrl())) {
+                boxItem.setTipText(String.format(ArthasCommandConstants.LABEL_HTML_FORMAT_AND_LINK, scriptConstantEnum.getUrl(), scriptConstantEnum.getEnumMsg()));
             }
             commonShellScriptComboBox.addItem(boxItem);
             if (!constantLabel) {
@@ -323,7 +329,7 @@ public class ArthasShellScriptCommandDialog extends JDialog {
         // 监听文字的变化 根据是否有;号判断是否能够执行copy command
         try {
             ComboBoxEditor editor = commonShellScriptComboBox.getEditor();
-            if (editor !=null) {
+            if (editor != null) {
                 final JTextComponent tc = (JTextComponent) editor.getEditorComponent();
                 tc.getDocument().addDocumentListener(new DocumentListener() {
                     @Override
@@ -332,7 +338,7 @@ public class ArthasShellScriptCommandDialog extends JDialog {
                             String text = e.getDocument().getText(0, e.getDocument().getLength());
                             checkStaticCommandChange(text);
                         } catch (Exception ex) {
-                           //
+                            //
                         }
                     }
 
@@ -358,7 +364,7 @@ public class ArthasShellScriptCommandDialog extends JDialog {
                 });
             }
         } catch (Exception e) {
-           //
+            //
         }
 
         commonShellScriptComboBox.setRenderer(new CustomDefaultListCellRenderer(commonShellScriptComboBox, this.constantLabel));
@@ -383,9 +389,9 @@ public class ArthasShellScriptCommandDialog extends JDialog {
         this.constantLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(currentSelectConstantScriptVariableEnum !=null){
+                if (currentSelectConstantScriptVariableEnum != null) {
                     ShellScriptConstantEnum contentObject = (ShellScriptConstantEnum) currentSelectConstantScriptVariableEnum.getContentObject();
-                    if(contentObject !=null && contentObject.getUrl() !=null){
+                    if (contentObject != null && contentObject.getUrl() != null) {
                         BrowserUtil.browse(contentObject.getUrl());
                     }
                 }
@@ -394,7 +400,7 @@ public class ArthasShellScriptCommandDialog extends JDialog {
 
     }
 
-    private void checkStaticCommandChange(String currentText){
+    private void checkStaticCommandChange(String currentText) {
         if (currentText != null && currentText.indexOf(";") > 0) {
             commonCopyCommandButton.setEnabled(false);
         } else {
@@ -434,5 +440,92 @@ public class ArthasShellScriptCommandDialog extends JDialog {
 
     private void createUIComponents() {
         this.dyScHelpLink = ActionLinkUtils.newActionLink("https://arthas.aliyun.com/doc/sc.html");
+    }
+
+    /**
+     * Method generated by IntelliJ IDEA GUI Designer
+     * >>> IMPORTANT!! <<<
+     * DO NOT edit this method OR call it in your code!
+     *
+     * @noinspection ALL
+     */
+    private void $$$setupUI$$$() {
+        createUIComponents();
+        contentPane = new JPanel();
+        contentPane.setLayout(new GridLayoutManager(11, 3, new Insets(5, 5, 5, 5), -1, -1));
+        contentPane.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, null, null));
+        dyTipLabel = new JLabel();
+        dyTipLabel.setText("");
+        contentPane.add(dyTipLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        constantLabel = new JLabel();
+        constantLabel.setEnabled(true);
+        constantLabel.setText("");
+        contentPane.add(constantLabel, new GridConstraints(7, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(500, -1), null, 0, false));
+        selectCommandCloseDialogRadioButton = new JRadioButton();
+        selectCommandCloseDialogRadioButton.setText("close this window after seleced one command");
+        contentPane.add(selectCommandCloseDialogRadioButton, new GridConstraints(10, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(438, 22), null, 0, false));
+        final JLabel label1 = new JLabel();
+        label1.setText("dymastic commands(show only the commands available at the current mouse position)");
+        contentPane.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JPanel panel1 = new JPanel();
+        panel1.setLayout(new GridLayoutManager(1, 2, new Insets(0, 0, 0, 0), -1, -1));
+        contentPane.add(panel1, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        dyScHelpLink.setText("sc -d get classloader");
+        panel1.add(dyScHelpLink, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        dyClassloaderHashTextField = new JTextField();
+        panel1.add(dyClassloaderHashTextField, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        final JPanel panel2 = new JPanel();
+        panel2.setLayout(new FormLayout("fill:846px:grow,fill:118px:noGrow", "center:d:grow"));
+        contentPane.add(panel2, new GridConstraints(2, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        shellScriptComboBox = new JComboBox();
+        shellScriptComboBox.setEditable(true);
+        final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
+        shellScriptComboBox.setModel(defaultComboBoxModel1);
+        CellConstraints cc = new CellConstraints();
+        panel2.add(shellScriptComboBox, cc.xy(1, 1, CellConstraints.FILL, CellConstraints.CENTER));
+        shellScriptCommandButton = new JButton();
+        shellScriptCommandButton.setText("shell command");
+        shellScriptCommandButton.setToolTipText("直接执行脚本无需打开arthas");
+        panel2.add(shellScriptCommandButton, cc.xy(2, 1, CellConstraints.RIGHT, CellConstraints.CENTER));
+        final JPanel panel3 = new JPanel();
+        panel3.setLayout(new FormLayout("fill:846px:grow,fill:118px:noGrow", "center:d:grow"));
+        contentPane.add(panel3, new GridConstraints(8, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        commonShellScriptComboBox = new JComboBox();
+        commonShellScriptComboBox.setEditable(true);
+        panel3.add(commonShellScriptComboBox, cc.xy(1, 1));
+        commonShellScriptCommandButton = new JButton();
+        commonShellScriptCommandButton.setText("shell command");
+        commonShellScriptCommandButton.setToolTipText("直接执行脚本无需打开arthas");
+        panel3.add(commonShellScriptCommandButton, cc.xy(2, 1, CellConstraints.RIGHT, CellConstraints.CENTER));
+        dyCopyCommandButton = new JButton();
+        dyCopyCommandButton.setText("copy  command");
+        dyCopyCommandButton.setToolTipText("命令复制到剪切板 到服务器启动arhtas 执行命令 部分脚本可能不支持哦,需要classloader hashcode");
+        contentPane.add(dyCopyCommandButton, new GridConstraints(4, 1, 1, 2, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        dyCopyScCommandButton = new JButton();
+        dyCopyScCommandButton.setText("copy sc command");
+        contentPane.add(dyCopyScCommandButton, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        closeScriptButton = new JButton();
+        closeScriptButton.setText("close  command");
+        contentPane.add(closeScriptButton, new GridConstraints(10, 1, 1, 2, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        commonCopyCommandButton = new JButton();
+        commonCopyCommandButton.setText("copy command");
+        commonCopyCommandButton.setToolTipText("命令复制到剪切板 到服务器启动arhtas 执行命令 部分为批量脚本 不能执行哦");
+        contentPane.add(commonCopyCommandButton, new GridConstraints(9, 1, 1, 2, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        final JLabel label2 = new JLabel();
+        label2.setText("static commands(multiple commands can only be used with shell command)");
+        contentPane.add(label2, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JSeparator separator1 = new JSeparator();
+        contentPane.add(separator1, new GridConstraints(5, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        dyClearCacheButton = new JButton();
+        dyClearCacheButton.setText("clear cache");
+        dyClearCacheButton.setToolTipText("clear  cache of previously used classloaders ");
+        contentPane.add(dyClearCacheButton, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+    }
+
+    /**
+     * @noinspection ALL
+     */
+    public JComponent $$$getRootComponent$$$() {
+        return contentPane;
     }
 }
