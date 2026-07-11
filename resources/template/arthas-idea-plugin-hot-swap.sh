@@ -240,9 +240,6 @@ main() {
 
   banner_simple "arthas idea plugin hot swap begin;start script path: $(pwd)/arthas-idea-plugin-hot-swap.sh"
 
-  #提权
-  sudo -i
-
   check_permission
 
   installArthas
