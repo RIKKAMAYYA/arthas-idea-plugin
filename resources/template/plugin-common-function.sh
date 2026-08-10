@@ -155,15 +155,24 @@ reset_for_env() {
 
 select_pid() {
   local IFS=$'\n'
-  CANDIDATES=($(${JAVA_HOME}/bin/jps -l | grep -v sun.tools.jps.Jps | awk '{print $0}'))
+  # jps may not list a process when it uses a different JDK. Keep the process
+  # discovery aligned with the hot-swap script and inspect the OS process table instead.
+  CANDIDATES=($(ps -ef | grep '[j]ava' | grep -v 'arthas-boot.jar' | awk '{pid=$2; cmd=""; for(i=8;i<=NF;i++) cmd=cmd" "$i; print pid" "cmd}'))
+
+  if [ ${#CANDIDATES[@]} -eq 0 ]; then
+    echo "$(echo $(tput setaf 1)No Java process was found$(tput sgr0))"
+    return 1
+  fi
 
   index=0
   suggest=1
-  # auto select tomcat/pandora-boot process
+  # auto select tomcat/pandora-boot/spring-boot/jar process
   for process in "${CANDIDATES[@]}"; do
     index=$(($index + 1))
-    if [ $(echo ${process} | grep -c org.apache.catalina.startup.Bootstrap) -eq 1 ] ||
-      [ $(echo ${process} | grep -c com.taobao.pandora.boot.loader.SarLauncher) -eq 1 ]; then
+    if [[ "${process}" == *"org.apache.catalina.startup.Bootstrap"* ]] ||
+      [[ "${process}" == *"com.taobao.pandora.boot.loader.SarLauncher"* ]] ||
+      [[ "${process}" == *"spring-boot"* ]] ||
+      [[ "${process}" == *".jar"* ]]; then
       suggest=${index}
       break
     fi
@@ -179,16 +188,21 @@ select_pid() {
     fi
   done
   echo " "
-  echo "$(echo $(tput setaf 1) 请手动选择进程或者idea 预先配置jps -l 工程名称自动执行$(tput sgr0))"
+  echo "$(echo $(tput setaf 1) Select a Java process, or configure a project name for automatic selection$(tput sgr0))"
   echo " "
 
-  read choice
+  read -r choice
 
-  if [ -z ${choice} ]; then
+  if [ -z "${choice}" ]; then
     choice=${suggest}
   fi
 
-  TARGET_PID=$(echo ${CANDIDATES[$(($choice - 1))]} | cut -d ' ' -f 1)
+  if ! [[ "${choice}" =~ ^[0-9]+$ ]] || [ "${choice}" -lt 1 ] || [ "${choice}" -gt ${#CANDIDATES[@]} ]; then
+    echo "Invalid process selection: ${choice}"
+    return 1
+  fi
+
+  TARGET_PID=$(echo "${CANDIDATES[$(($choice - 1))]}" | cut -d ' ' -f 1)
 }
 
 # Usage: banner_simple "my title"

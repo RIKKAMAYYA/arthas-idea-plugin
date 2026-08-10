@@ -1,7 +1,6 @@
 package com.github.idea.arthas.plugin.action.arthas;
 
-import com.github.idea.arthas.plugin.utils.ClipboardUtils;
-import com.github.idea.arthas.plugin.utils.NotifyUtils;
+import com.github.idea.arthas.plugin.utils.CommonExecuteScriptUtils;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -25,9 +24,10 @@ public class ArthasJadCommandAction extends BaseArthasPluginAction {
             // 查看当前类的反编译结果
             methodName = "";
         }
-        String command = String.join(" ", "jad --source-only", className, methodName);
-        ClipboardUtils.setClipboardString(command);
-        String message = NotifyUtils.COMMAND_COPIED + "(Decompile the code of the target method or class, online consistency check is very convenient)";
-        NotifyUtils.notifyMessageOpenTerminal(project, message, command, editor);
+        // The common script assigns this command in double quotes, so retain an
+        // inner-class separator as a literal instead of expanding it as a shell variable.
+        String command = String.join(" ", "jad --source-only", className.replace("$", "\\$"), methodName).trim();
+        CommonExecuteScriptUtils.executeCommonScript(project, "", command,
+                " (Decompile the target method or class without opening Arthas)");
     }
 }

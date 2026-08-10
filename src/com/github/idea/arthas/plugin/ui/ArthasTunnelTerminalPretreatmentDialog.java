@@ -28,6 +28,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.*;
+import java.util.List;
 
 /**
  * 打开 ArthasTunnelTerminal 预处理 Dialog 选择 Arthas Tunnel Server Agent 信息
@@ -341,10 +342,9 @@ public class ArthasTunnelTerminalPretreatmentDialog extends JDialog {
     private void $$$setupUI$$$() {
         createUIComponents();
         contentPane = new JPanel();
-        contentPane.setLayout(new GridLayoutManager(6, 2, new Insets(10, 10, 10, 10), -1, -1));
-        contentPane.setMaximumSize(new Dimension(720, 300));
-        contentPane.setMinimumSize(new Dimension(700, 300));
-        contentPane.setPreferredSize(new Dimension(700, 300));
+        contentPane.setLayout(new GridLayoutManager(9, 2, new Insets(10, 10, 10, 10), -1, -1));
+        contentPane.setMinimumSize(new Dimension(600, 300));
+        contentPane.setPreferredSize(new Dimension(650, 300));
         tunnelServerLabel.setEnabled(true);
         tunnelServerLabel.setFocusable(false);
         tunnelServerLabel.setText("tunnel server addr");
@@ -354,11 +354,11 @@ public class ArthasTunnelTerminalPretreatmentDialog extends JDialog {
         command.setFocusable(false);
         command.setRequestFocusEnabled(false);
         command.setText("command");
-        contentPane.add(command, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        contentPane.add(command, new GridConstraints(6, 0, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         tunnelAppLabel.setFocusable(false);
         tunnelAppLabel.setText("app list");
         tunnelAppLabel.setToolTipText("best practices agentId config with appName ");
-        contentPane.add(tunnelAppLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(49, 25), null, 0, false));
+        contentPane.add(tunnelAppLabel, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         appComboBox = new JComboBox();
         appComboBox.setEditable(false);
         appComboBox.setFocusable(false);
@@ -366,52 +366,41 @@ public class ArthasTunnelTerminalPretreatmentDialog extends JDialog {
         appComboBox.setModel(defaultComboBoxModel1);
         appComboBox.setRequestFocusEnabled(false);
         appComboBox.setToolTipText("");
-        contentPane.add(appComboBox, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(400, 25), new Dimension(500, -1), 0, false));
+        contentPane.add(appComboBox, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         tunnelServerComboBox = new JComboBox();
         tunnelServerComboBox.setEditable(false);
         tunnelServerComboBox.setFocusable(false);
         final DefaultComboBoxModel defaultComboBoxModel2 = new DefaultComboBoxModel();
         tunnelServerComboBox.setModel(defaultComboBoxModel2);
         tunnelServerComboBox.setRequestFocusEnabled(false);
-        contentPane.add(tunnelServerComboBox, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(400, -1), null, 0, false));
+        contentPane.add(tunnelServerComboBox, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         execBtn = new JButton();
         execBtn.setFocusable(false);
         execBtn.setRequestFocusEnabled(false);
         execBtn.setText("execute command");
-        contentPane.add(execBtn, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        contentPane.add(execBtn, new GridConstraints(8, 1, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, 1, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JScrollPane scrollPane1 = new JScrollPane();
         scrollPane1.setHorizontalScrollBarPolicy(31);
-        scrollPane1.setVerticalScrollBarPolicy(20);
-        contentPane.add(scrollPane1, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(555, 120), new Dimension(555, 120), 0, false));
+        scrollPane1.setVerticalScrollBarPolicy(22);
+        contentPane.add(scrollPane1, new GridConstraints(6, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(-1, 120), null, 0, false));
         commendEdit = new JTextArea();
-        commendEdit.setAlignmentX(0.5f);
-        commendEdit.setAlignmentY(0.5f);
-        commendEdit.setAutoscrolls(false);
-        commendEdit.setColumns(1);
-        commendEdit.setDragEnabled(false);
-        commendEdit.setEditable(true);
-        commendEdit.setFocusCycleRoot(false);
         commendEdit.setLineWrap(true);
         commendEdit.setMargin(new Insets(10, 10, 10, 10));
-        commendEdit.setMaximumSize(new Dimension(2147483647, 2147483647));
-        commendEdit.setMinimumSize(new Dimension(555, 120));
-        commendEdit.setPreferredSize(new Dimension(555, 17020));
         commendEdit.setRequestFocusEnabled(true);
-        commendEdit.setRows(1000);
         commendEdit.setText("");
         commendEdit.setToolTipText("");
         commendEdit.setWrapStyleWord(true);
         scrollPane1.setViewportView(commendEdit);
         final Spacer spacer1 = new Spacer();
-        contentPane.add(spacer1, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        contentPane.add(spacer1, new GridConstraints(7, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         settingTunnelServerButton = new JButton();
         settingTunnelServerButton.setFocusable(false);
         settingTunnelServerButton.setText("setting tunnel server");
-        contentPane.add(settingTunnelServerButton, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        contentPane.add(settingTunnelServerButton, new GridConstraints(8, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         agentLabel.setFocusable(false);
         agentLabel.setText("agent id");
         agentLabel.setToolTipText(" agentId is prefix with appName\n");
-        contentPane.add(agentLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(49, 25), null, 0, false));
+        contentPane.add(agentLabel, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         agentComboBox = new JComboBox();
         agentComboBox.setEditable(false);
         agentComboBox.setFocusable(false);
@@ -419,7 +408,21 @@ public class ArthasTunnelTerminalPretreatmentDialog extends JDialog {
         agentComboBox.setModel(defaultComboBoxModel3);
         agentComboBox.setRequestFocusEnabled(false);
         agentComboBox.setToolTipText("");
-        contentPane.add(agentComboBox, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(400, 25), new Dimension(500, -1), 0, false));
+        contentPane.add(agentComboBox, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        uname.setFocusable(false);
+        uname.setText("auth.username");
+        uname.setToolTipText(" agentId is prefix with appName\n");
+        contentPane.add(uname, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        upwd.setFocusable(false);
+        upwd.setText("auth.password");
+        upwd.setToolTipText(" agentId is prefix with appName\n");
+        contentPane.add(upwd, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        username = new JTextField();
+        contentPane.add(username, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        password = new JTextField();
+        contentPane.add(password, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        authLink.setText("Configure Auth");
+        contentPane.add(authLink, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
     }
 
     /**
@@ -428,4 +431,5 @@ public class ArthasTunnelTerminalPretreatmentDialog extends JDialog {
     public JComponent $$$getRootComponent$$$() {
         return contentPane;
     }
+
 }
